@@ -68,7 +68,7 @@ button:disabled:hover {
 }
 
 .emphasize {
-    background-color: yellow;
+    background-color: yellow !important;
 }
 
 #container {
@@ -97,4 +97,9 @@ button:disabled:hover {
     color: white;
     font-size: 30px;
     position: relative;
+}
+
+#stats {
+    font-size: 20px;
+    padding: 20px;
 }

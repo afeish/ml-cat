@@ -11,6 +11,11 @@ constants.SAMPLES_JS = constants.JS_OBJECTS + "/samples.js";
 constants.FEATURES = constants.DASET_DIR + "/features.json";
 constants.FEATURES_JS = constants.JS_OBJECTS + "/features.js";
 constants.MINMAX_JS = constants.JS_OBJECTS + "/minMax.js";
+
+constants.TRAINING = constants.DASET_DIR + "/training.json";
+constants.TRAINING_JS = constants.JS_OBJECTS + "/training.js";
+constants.TESTING = constants.DASET_DIR + "/testing.json";
+constants.TESTING_JS = constants.JS_OBJECTS + "/testing.js";
 if (typeof module !== "undefined") {
   module.exports = constants;
 }

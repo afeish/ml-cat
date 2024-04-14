@@ -16,10 +16,13 @@
     <div id="chartContainer"></div>
     <div id="controlPannel">
         <button onclick="toggleInput()">Toggle Input</button>
+        <div id="stats"></div>
     </div>
     <div id="container"></div>
 
     <script src="../common/js_objects/features.js"></script>
+    <script src="../common/js_objects/training.js"></script>
+    <script src="../common/js_objects/testing.js"></script>
     <script src="../common/js_objects/minMax.js"></script>
     <script src="../common/constants.js"></script>
     <script src="../common/utils.js"></script>
@@ -36,12 +39,42 @@
 
     <script>
         let { samples, featureNames } = features;
-        const groups = utils.groupBy(samples, 'student_id');
-        for (let stuid in groups) {
-            const sample = groups[stuid]
+        const trainingSamples = training.samples;
+        const testingSamples = testing.samples;
+        let correctCnt = 0
+        let totalCnt = 0
+        const k = 15
+        for (const testSample of testingSamples) {
+            testSample.truth = testSample.label;
+            testSample.label = "?"
+            const {label} = classify(testSample.point)
+            testSample.label = label;
+            testSample.correct = testSample.label == testSample.truth
+            totalCnt ++
+            if (testSample.correct) {
+                correctCnt ++
+            }
+        }
+
+        stats.innerHTML = "<b>ACCURACY</b><br>" + correctCnt + "/" + totalCnt + "(" + utils.formatPercent(correctCnt/totalCnt) + ")"
+
+        const trainingGroups = utils.groupBy(trainingSamples, 'student_id');
+        for (let stuid in trainingGroups) {
+            const sample = trainingGroups[stuid]
             const name = sample[0].student_name
             createRow(container, name, sample)
         }
+
+        const subtitle = document.createElement('h2');
+        subtitle.innerHTML = "TESTING"
+        container.appendChild(subtitle)
+
+        const testingGroups = utils.groupBy(testingSamples, 'student_id');
+            for (let stuid in testingGroups) {
+                const sample = testingGroups[stuid]
+                const name = sample[0].student_name
+                createRow(container, name, sample)
+            }
 
         const options = {
             size: 500,
@@ -53,9 +86,10 @@
         }
 
         graphics.generateImages(utils.styles)
-        const chart = new Chart(chartContainer, samples, options, handleClick)
+        const chart = new Chart(chartContainer, trainingSamples, options, handleClick)
 
         const sketchPad = new SketchPad(inputContainer, onDrawingUpdate)
+        toggleInput()
 
         sketchPad.canvas.style.cssText += "outline:10000000px solid rgba(0,0,0,0.7);"
 
@@ -69,9 +103,9 @@
         }
 
         function classify(point) {
-            const samplePoints = samples.map(s => s.point)
-            const indices = utils.getNearest(point, samplePoints, 10)
-            const nearestSamples = indices.map(i => samples[i])
+            const samplePoints = trainingSamples.map(s => s.point)
+            const indices = utils.getNearest(point, samplePoints, k)
+            const nearestSamples = indices.map(i => trainingSamples[i])
             const labels = nearestSamples.map(s => s.label)
             const count = {}
             for (const label of labels) {
