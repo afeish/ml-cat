@@ -13,6 +13,7 @@ const createRow = (container, name, samples) => {
 
     const sampleContainer = document.createElement("div");
     sampleContainer.id = "sample_" + id;
+    sampleContainer.onclick = () => handleClick(sample, false);
     sampleContainer.classList.add("sampleContainer");
 
     const sampleLabel = document.createElement("div");
@@ -29,4 +30,31 @@ const createRow = (container, name, samples) => {
 
     row.appendChild(sampleContainer);
   }
+};
+
+const handleClick = (sample, focus = true) => {
+  if (sample == null) {
+    [...document.querySelectorAll(".emphasize")].forEach((e) =>
+      e.classList.remove("emphasize")
+    );
+    return;
+  }
+
+  const el = document.getElementById(`sample_${sample.id}`);
+  if (el.classList.contains("emphasize")) {
+    el.classList.remove("emphasize");
+    chart.selectSample(null);
+    return;
+  }
+  [...document.querySelectorAll(".emphasize")].forEach((e) =>
+    e.classList.remove("emphasize")
+  );
+  el.classList.add("emphasize");
+  if (focus) {
+    el.scrollIntoView({
+      behavior: "auto",
+      block: "center",
+    });
+  }
+  chart.selectSample(sample);
 };
