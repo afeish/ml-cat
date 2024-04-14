@@ -58,3 +58,13 @@ const handleClick = (sample, focus = true) => {
   }
   chart.selectSample(sample);
 };
+
+const toggleInput = () => {
+  if (inputContainer.style.display == "none") {
+    inputContainer.style.display = "block";
+    sketchPad.triggerUpdate();
+  } else {
+    inputContainer.style.display = "none";
+    chart.hideDynamicPoint();
+  }
+};

@@ -1,5 +1,5 @@
 const constants = require("../common/constants");
-const features = require("../common/features");
+const featureFns = require("../common/feature_fns");
 
 const fs = require("fs");
 
@@ -9,10 +9,11 @@ for (const sample of samples) {
   const paths = JSON.parse(
     fs.readFileSync(constants.JSON_DIR + "/" + sample.id + ".json")
   );
-  sample.point = [features.getPathCount(paths), features.getPointCount(paths)];
+  const fns = featureFns.inUse.map((fn) => fn.function);
+  sample.point = fns.map((f) => f(paths));
 }
 
-const featureNames = ["Path Count", "Point Count"];
+const featureNames = featureFns.inUse.map((f) => f.name);
 fs.writeFileSync(
   constants.FEATURES,
   JSON.stringify({
