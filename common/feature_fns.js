@@ -28,8 +28,8 @@ featureFns.getHeight = (paths) => {
 featureFns.inUse = [
   { name: "Width", function: featureFns.getWidth },
   { name: "Height", function: featureFns.getHeight },
-  { name: "getPathCount", function: featureFns.getPathCount },
-  { name: "getPointCount", function: featureFns.getPointCount },
+  // { name: "getPathCount", function: featureFns.getPathCount },
+  // { name: "getPointCount", function: featureFns.getPointCount },
 ];
 
 if (typeof module !== "undefined") {
