@@ -13,7 +13,13 @@ const createRow = (container, name, samples) => {
 
     const sampleContainer = document.createElement("div");
     sampleContainer.id = "sample_" + id;
-    sampleContainer.onclick = () => handleClick(sample, false);
+    sampleContainer.onclick = (evt) => {
+      if (evt.ctrlKey) {
+        toggleFlaggedSample(sample);
+      } else {
+        handleClick(sample, false);
+      }
+    };
     sampleContainer.classList.add("sampleContainer");
     if (correct) {
       sampleContainer.style.backgroundColor = "lightgreen";
@@ -69,5 +75,13 @@ const toggleInput = () => {
   } else {
     inputContainer.style.display = "none";
     chart.hideDynamicPoint();
+  }
+};
+
+const toggleOutput = () => {
+  if (confusionContainer.style.display == "none") {
+    confusionContainer.style.display = "block";
+  } else {
+    confusionContainer.style.display = "none";
   }
 };

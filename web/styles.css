@@ -54,6 +54,8 @@ button:disabled:hover {
     border-radius: 10%;
     margin: 1px;
     overflow: hidden;
+
+    max-width: 8%;
 }
 
 .blur {
@@ -65,6 +67,13 @@ button:disabled:hover {
     right: 0;
     top: 50%;
     transform: translate(0, -50%);
+}
+
+#confusionContainer {
+    position: absolute;
+    right: 0;
+    background-color: white;
+    z-index: 1;
 }
 
 .emphasize {
@@ -102,4 +111,28 @@ button:disabled:hover {
 #stats {
     font-size: 20px;
     padding: 20px;
+}
+
+.flagged {
+    background-color: red !important;
+}
+
+.infoButton {
+    color: red;
+    cursor: pointer;
+}
+
+.infoButton:hover .tooltipText {
+    visibility: visible;
+}
+
+.tooltipText {
+    color: white;
+    background-color: red;
+    position: absolute;
+    visibility: hidden;
+    font-size: small;
+    border-radius: 6px;
+    padding: 6px;
+    font-weight: normal;
 }
