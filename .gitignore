@@ -1,3 +1,4 @@
 data/dataset
 node_modules
 common/js_objects
+.venv
