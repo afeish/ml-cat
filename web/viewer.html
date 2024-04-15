@@ -28,6 +28,7 @@
     <script src="../common/utils.js"></script>
     <script src="../common/draw.js"></script>
     <script src="../common/feature_fns.js"></script>
+    <script src="../common/classifiers/knn.js"></script>
 
     <script src="js/display.js"></script>
     <script src="js/sketchPad.js"></script>
@@ -43,11 +44,12 @@
         const testingSamples = testing.samples;
         let correctCnt = 0
         let totalCnt = 0
-        const k = 15
+        const k = 50
+        const knn = new KNN(trainingSamples, k)
         for (const testSample of testingSamples) {
             testSample.truth = testSample.label;
             testSample.label = "?"
-            const {label} = classify(testSample.point)
+            const {label} = knn.predict(testSample.point)
             testSample.label = label;
             testSample.correct = testSample.label == testSample.truth
             totalCnt ++
@@ -82,8 +84,11 @@
             styles: utils.styles,
             transparency: 0.7,
             icon: "image",
+            bg: new Image()
             // icon: "text"
         }
+
+        options.bg.src= constants.DECISION_BOUNDARY;
 
         graphics.generateImages(utils.styles)
         const chart = new Chart(chartContainer, trainingSamples, options, handleClick)
@@ -97,24 +102,11 @@
             const fns = featureFns.inUse.map((fn) => fn.function);
             const point = fns.map((f) => f(paths));
             utils.normalizePoints([point], minMax);
-            const {label, nearestSamples } = classify(point);
+            const {label, nearestSamples } = knn.predict(point);
             predictedLabelContainer.innerHTML = `Is it a ${label} ?`
             chart.showDynamicPoint(point, label, nearestSamples)
         }
 
-        function classify(point) {
-            const samplePoints = trainingSamples.map(s => s.point)
-            const indices = utils.getNearest(point, samplePoints, k)
-            const nearestSamples = indices.map(i => trainingSamples[i])
-            const labels = nearestSamples.map(s => s.label)
-            const count = {}
-            for (const label of labels) {
-                count[label] = count[label] ? count[label] + 1: 1
-            }
-            const max = Math.max(...Object.values(count))
-            const label = labels.find(l => count[l] == max)
-            return {label: label , nearestSamples }
-        }
     </script>
 </body>  
 </html>
