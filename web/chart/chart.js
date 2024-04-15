@@ -198,17 +198,17 @@ class Chart {
     const sz = (canvas.width - this.margin * 2) / this.dataTrans.scale ** 2;
     ctx.drawImage(this.bg, ...topLeft, sz, sz);
 
-    ctx.globalAlpha = this.transparency;
-    this.#drawSamples(this.samples);
-    ctx.globalAlpha = 1;
+    // ctx.globalAlpha = this.transparency;
+    // this.#drawSamples(this.samples);
+    // ctx.globalAlpha = 1;
 
-    if (this.hoveredSample) {
-      this.#emphasizeSample(this.hoveredSample);
-    }
+    // if (this.hoveredSample) {
+    //   this.#emphasizeSample(this.hoveredSample);
+    // }
 
-    if (this.selectedSample) {
-      this.#emphasizeSample(this.selectedSample, "yellow");
-    }
+    // if (this.selectedSample) {
+    //   this.#emphasizeSample(this.selectedSample, "yellow");
+    // }
 
     if (this.dynamicPoint) {
       const { point, label } = this.dynamicPoint;
@@ -219,17 +219,17 @@ class Chart {
       );
       graphics.drawPoint(ctx, pixelLoc, "rgba(255,255,255,0.7)", 100000000000);
       ctx.strokeStyle = "gray";
-      for (const sample of this.nearestSamples) {
-        const point = math.remapPoint(
-          this.dataBounds,
-          this.pixelBounds,
-          sample.point
-        );
-        ctx.beginPath();
-        ctx.moveTo(...pixelLoc);
-        ctx.lineTo(...point);
-        ctx.stroke();
-      }
+      // for (const sample of this.nearestSamples) {
+      //   const point = math.remapPoint(
+      //     this.dataBounds,
+      //     this.pixelBounds,
+      //     sample.point
+      //   );
+      //   ctx.beginPath();
+      //   ctx.moveTo(...pixelLoc);
+      //   ctx.lineTo(...point);
+      //   ctx.stroke();
+      // }
       graphics.drawImage(ctx, this.styles[label].image, pixelLoc);
     }
 
