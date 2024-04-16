@@ -4,9 +4,10 @@ class SketchPad {
     this.canvas.width = size;
     this.canvas.height = size;
     this.canvas.style = `
-            background-color: white;
-            box-shadow: 0px 0px 10px 2px black;
-        `;
+         background-color:white;
+         box-shadow: 0px 0px 10px 2px black;
+         filter: invert(1);
+      `;
     container.appendChild(this.canvas);
 
     const lineBreak = document.createElement("br");
@@ -14,11 +15,15 @@ class SketchPad {
 
     this.undoBtn = document.createElement("button");
     this.undoBtn.innerHTML = "UNDO";
+    this.undoBtn.style.position = "relative";
+    this.undoBtn.style.zIndex = 1;
     container.appendChild(this.undoBtn);
 
     this.ctx = this.canvas.getContext("2d");
+
     this.onUpdate = onUpdate;
     this.reset();
+
     this.#addEventListeners();
   }
 
@@ -27,41 +32,27 @@ class SketchPad {
     this.isDrawing = false;
     this.#redraw();
   }
-  triggerUpdate() {
-    if (this.onUpdate) {
-      this.onUpdate(this.paths);
-    }
-  }
 
   #addEventListeners() {
-    this.canvas.onmousedown = (evt) => {
+    this.canvas.onpointerdown = (evt) => {
       const mouse = this.#getMouse(evt);
       this.paths.push([mouse]);
       this.isDrawing = true;
+      evt.preventDefault();
     };
-    this.canvas.onmousemove = (evt) => {
+    this.canvas.onpointermove = (evt) => {
       if (this.isDrawing) {
         const mouse = this.#getMouse(evt);
         const lastPath = this.paths[this.paths.length - 1];
         lastPath.push(mouse);
         this.#redraw();
       }
+      evt.preventDefault();
     };
-    document.onmouseup = (evt) => {
+    document.onpointerup = () => {
       this.isDrawing = false;
     };
-    this.canvas.ontouchstart = (evt) => {
-      const loc = evt.touches[0];
-      this.canvas.onmousedown(loc);
-    };
-    this.canvas.ontouchmove = (evt) => {
-      const loc = evt.touches[0];
-      this.canvas.onmousemove(loc);
-    };
-    document.ontouchend = (evt) => {
-      document.onmouseup(evt);
-    };
-    this.undoBtn.onclick = (evt) => {
+    this.undoBtn.onclick = () => {
       this.paths.pop();
       this.#redraw();
     };
@@ -78,11 +69,17 @@ class SketchPad {
     this.triggerUpdate();
   }
 
-  #getMouse(evt) {
+  triggerUpdate() {
+    if (this.onUpdate) {
+      this.onUpdate(this.paths);
+    }
+  }
+
+  #getMouse = (evt) => {
     const rect = this.canvas.getBoundingClientRect();
     return [
       Math.round(evt.clientX - rect.left),
       Math.round(evt.clientY - rect.top),
     ];
-  }
+  };
 }

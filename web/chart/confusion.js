@@ -32,8 +32,8 @@ class Confusion {
     leftText.innerHTML = "True Class";
     leftText.style.position = "absolute";
     leftText.style.fontSize = "x-large";
-    leftText.style.left = "0px";
     leftText.style.top = "50%";
+    leftText.style.left = "0px";
     leftText.style.transform = "translate(-50%) rotate(-90deg)";
     leftText.style.height = this.cellSize + "px";
     leftText.style.display = "flex";
@@ -53,6 +53,7 @@ class Confusion {
         mat[i][j] = 0;
       }
     }
+
     for (const s of samples) {
       mat[this.classes.indexOf(s.truth) + 1][
         this.classes.indexOf(s.label) + 1
@@ -110,10 +111,10 @@ class Confusion {
           const p = (2 * this.matrix[i][j]) / this.matrix[j][i];
           const R = p >= 0 ? p * 255 : 0;
           const B = p <= 0 ? -p * 255 : 0;
-          cell.style.color = `rgb(${R}, 0, ${B})`;
+          cell.style.color = `rgb(${R},0,${B})`;
         }
 
-        if (i > 0 && j == 0) {
+        if (j == 0 && i > 0) {
           cell.style.backgroundImage =
             "url(" + styles[classes[i - 1]].image.src + ")";
           cell.style.backgroundRepeat = "no-repeat";
@@ -125,9 +126,9 @@ class Confusion {
         if (i > 0 && j > 0) {
           const p = math.invLerp(min, max, matrix[i][j]);
           if (i == j) {
-            cell.style.backgroundColor = `rgba(0,0,255,${p})`;
+            cell.style.backgroundColor = `rgba(0, 0, 255, ${p})`;
           } else {
-            cell.style.backgroundColor = `rgba(255,0,0,${p})`;
+            cell.style.backgroundColor = `rgba(255, 0, 0, ${p})`;
           }
         }
 

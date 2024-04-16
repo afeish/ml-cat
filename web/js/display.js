@@ -1,10 +1,10 @@
-const createRow = (container, name, samples) => {
+function createRow(container, studentName, samples) {
   const row = document.createElement("div");
   row.classList.add("row");
   container.appendChild(row);
 
   const rowLabel = document.createElement("div");
-  rowLabel.innerHTML = name;
+  rowLabel.innerHTML = studentName;
   rowLabel.classList.add("rowLabel");
   row.appendChild(rowLabel);
 
@@ -22,7 +22,7 @@ const createRow = (container, name, samples) => {
     };
     sampleContainer.classList.add("sampleContainer");
     if (correct) {
-      sampleContainer.style.backgroundColor = "lightgreen";
+      sampleContainer.style.backgroundColor = "#006";
     }
 
     const sampleLabel = document.createElement("div");
@@ -39,17 +39,16 @@ const createRow = (container, name, samples) => {
 
     row.appendChild(sampleContainer);
   }
-};
+}
 
-const handleClick = (sample, focus = true) => {
+function handleClick(sample, doScroll = true) {
   if (sample == null) {
     [...document.querySelectorAll(".emphasize")].forEach((e) =>
       e.classList.remove("emphasize")
     );
     return;
   }
-
-  const el = document.getElementById(`sample_${sample.id}`);
+  const el = document.getElementById("sample_" + sample.id);
   if (el.classList.contains("emphasize")) {
     el.classList.remove("emphasize");
     chart.selectSample(null);
@@ -59,16 +58,16 @@ const handleClick = (sample, focus = true) => {
     e.classList.remove("emphasize")
   );
   el.classList.add("emphasize");
-  if (focus) {
+  if (doScroll) {
     el.scrollIntoView({
       behavior: "auto",
       block: "center",
     });
   }
   chart.selectSample(sample);
-};
+}
 
-const toggleInput = () => {
+function toggleInput() {
   if (inputContainer.style.display == "none") {
     inputContainer.style.display = "block";
     sketchPad.triggerUpdate();
@@ -76,12 +75,12 @@ const toggleInput = () => {
     inputContainer.style.display = "none";
     chart.hideDynamicPoint();
   }
-};
+}
 
-const toggleOutput = () => {
+function toggleOutput() {
   if (confusionContainer.style.display == "none") {
     confusionContainer.style.display = "block";
   } else {
     confusionContainer.style.display = "none";
   }
-};
+}

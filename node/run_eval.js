@@ -1,17 +1,17 @@
-const constants = require("../common/constants");
-const utils = require("../common/utils");
+const constants = require("../common/constants.js");
+const utils = require("../common/utils.js");
 
-const KNN = require("../common/classifiers/knn");
+const KNN = require("../common/classifiers/knn.js");
 
 const fs = require("fs");
 
-console.log("RUNNIGN CLASSFICATION ...");
+console.log("RUNNING CLASSIFICATION ...");
 
-const { samples: traingSamples } = JSON.parse(
+const { samples: trainingSamples } = JSON.parse(
   fs.readFileSync(constants.TRAINING)
 );
 
-const knn = new KNN(traingSamples, 50);
+const kNN = new KNN(trainingSamples);
 
 const { samples: testingSamples } = JSON.parse(
   fs.readFileSync(constants.TESTING)
@@ -20,7 +20,7 @@ const { samples: testingSamples } = JSON.parse(
 let totalCount = 0;
 let correctCount = 0;
 for (const sample of testingSamples) {
-  const { label: predictedLabel } = knn.predict(sample.point);
+  const { label: predictedLabel } = kNN.predict(sample.point);
   correctCount += predictedLabel == sample.label;
   totalCount++;
 }
@@ -35,24 +35,26 @@ console.log(
     ")"
 );
 
-console.log(`GENERATING DECISION BOUNDARY ...`);
+console.log("GENERATING DECISION BOUNDARY ...");
 
 const { createCanvas } = require("canvas");
-const canvas = createCanvas(100, 100);
+const imgSize = 100;
+const canvas = createCanvas(imgSize, imgSize);
 const ctx = canvas.getContext("2d");
 
 for (let x = 0; x < canvas.width; x++) {
   for (let y = 0; y < canvas.height; y++) {
     const point = [x / canvas.width, 1 - y / canvas.height];
-    point.push(0.2);
-    const { label } = knn.predict(point);
+    while (point.length < trainingSamples[0].point.length) {
+      point.push(0);
+    }
+    const { label } = kNN.predict(point);
     const color = utils.styles[label].color;
     ctx.fillStyle = color;
     ctx.fillRect(x, y, 1, 1);
   }
-  utils.printProgess(x + 1, canvas.width);
+  utils.printProgress(x + 1, canvas.width);
 }
 
 const buffer = canvas.toBuffer("image/png");
 fs.writeFileSync(constants.DECISION_BOUNDARY, buffer);
-console.log(`DONE.`);

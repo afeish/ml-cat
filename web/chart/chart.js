@@ -1,3 +1,5 @@
+/* 15.5.2023: Optimization*/
+
 class Chart {
   constructor(container, samples, options, onClick = null) {
     this.samples = samples;
