@@ -1,15 +1,19 @@
-const featureFns = {};
+if (typeof geometry === "undefined") {
+  geometry = require("./geometry.js");
+}
 
-featureFns.getPathCount = (paths) => {
+const featureFunctions = {};
+
+featureFunctions.getPathCount = (paths) => {
   return paths.length;
 };
 
-featureFns.getPointCount = (paths) => {
+featureFunctions.getPointCount = (paths) => {
   const points = paths.flat();
   return points.length;
 };
 
-featureFns.getWidth = (paths) => {
+featureFunctions.getWidth = (paths) => {
   const points = paths.flat();
   const x = points.map((p) => p[0]);
   const min = Math.min(...x);
@@ -17,7 +21,7 @@ featureFns.getWidth = (paths) => {
   return max - min;
 };
 
-featureFns.getHeight = (paths) => {
+featureFunctions.getHeight = (paths) => {
   const points = paths.flat();
   const y = points.map((p) => p[1]);
   const min = Math.min(...y);
@@ -25,13 +29,20 @@ featureFns.getHeight = (paths) => {
   return max - min;
 };
 
-featureFns.inUse = [
-  { name: "Width", function: featureFns.getWidth },
-  { name: "Height", function: featureFns.getHeight },
-  // { name: "getPathCount", function: featureFns.getPathCount },
-  // { name: "getPointCount", function: featureFns.getPointCount },
+featureFunctions.getElongation = (paths) => {
+  const points = paths.flat();
+  const { width, height } = geometry.minimumBoundingBox({ points });
+  return (Math.max(width, height) + 1) / (Math.min(width, height) + 1);
+};
+
+featureFunctions.inUse = [
+  //{name:"Path Count",function:featureFunctions.getPathCount},
+  //{name:"Point Count",function:featureFunctions.getPointCount},
+  { name: "Width", function: featureFunctions.getWidth },
+  { name: "Height", function: featureFunctions.getHeight },
+  { name: "Elongation", function: featureFunctions.getElongation },
 ];
 
 if (typeof module !== "undefined") {
-  module.exports = featureFns;
+  module.exports = featureFunctions;
 }

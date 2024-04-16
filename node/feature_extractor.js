@@ -16,7 +16,7 @@ for (const sample of samples) {
 const featureNames = featureFns.inUse.map((f) => f.name);
 
 console.log("GENERATING SPLITS ...");
-const trainingAmount = samples.length * 0.5;
+const trainingAmount = samples.length * 0.8;
 const training = [];
 const testing = [];
 

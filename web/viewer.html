@@ -9,13 +9,12 @@
 <body>
   <h1>
     Data Viewer
-
     <span class="infoButton"
-      >ℹ️
+      >ⓘ
       <span class="tooltipText">
-        You can flag samples using CTRL + click
+        You can Flag samples using Ctrl + Click.
         <br />
-        Then use the console (flaggedSamples variable).
+        Then use the Console (flaggedSamples variable).
       </span>
     </span>
   </h1>
@@ -25,10 +24,10 @@
   <div id="chartContainer">
     <div id="confusionContainer"></div>
   </div>
-  <div id="controlPannel">
-    <button onclick="toggleInput()">Toggle Input</button>
-    <button onclick="toggleOutput()">Toggle Output</button>
-    <div id="stats"></div>
+  <div id="controlPanel">
+    <button onClick="toggleInput()">Toggle Input</button>
+    <button onClick="toggleOutput()">Toggle Output</button>
+    <div id="statistics"></div>
   </div>
   <div id="container"></div>
 
@@ -38,6 +37,7 @@
   <script src="../common/js_objects/minMax.js"></script>
   <script src="../common/constants.js"></script>
   <script src="../common/utils.js"></script>
+  <script src="../common/geometry.js"></script>
   <script src="../common/draw.js"></script>
   <script src="../common/feature_fns.js"></script>
   <script src="../common/classifiers/knn.js"></script>
@@ -52,38 +52,39 @@
   <script src="./chart/confusion.js"></script>
 
   <script>
-    let { samples, featureNames } = features;
+    const featureNames = training.featureNames;
     const trainingSamples = training.samples;
     const testingSamples = testing.samples;
-    let correctCnt = 0;
-    let totalCnt = 0;
-    const k = 50;
-    const knn = new KNN(trainingSamples, k);
+
+    // Classifying the testing samples
+    const kNN = new KNN(trainingSamples);
+    let correctCount = 0;
+    let totalCount = 0;
     for (const testSample of testingSamples) {
       testSample.truth = testSample.label;
       testSample.label = "?";
-      const { label } = knn.predict(testSample.point);
+      const { label, nearestSamples } = kNN.predict(testSample.point);
       testSample.label = label;
+      testSample.nearestSamples = nearestSamples;
       testSample.correct = testSample.label == testSample.truth;
-      totalCnt++;
-      if (testSample.correct) {
-        correctCnt++;
-      }
+      totalCount++;
+      correctCount += testSample.correct ? 1 : 0;
     }
-
-    stats.innerHTML =
+    statistics.innerHTML =
       "<b>ACCURACY</b><br>" +
-      correctCnt +
+      correctCount +
       "/" +
-      totalCnt +
-      "(" +
-      utils.formatPercent(correctCnt / totalCnt) +
+      totalCount +
+      " (" +
+      utils.formatPercent(correctCount / totalCount) +
       ")";
+
+    // Displaying the data grid
     const trainingGroups = utils.groupBy(trainingSamples, "student_id");
-    for (let stuid in trainingGroups) {
-      const sample = trainingGroups[stuid];
-      const name = sample[0].student_name;
-      createRow(container, name, sample);
+    for (let student_id in trainingGroups) {
+      const samples = trainingGroups[student_id];
+      const studentName = samples[0].student_name;
+      createRow(container, studentName, samples);
     }
 
     const subtitle = document.createElement("h2");
@@ -91,31 +92,32 @@
     container.appendChild(subtitle);
 
     const testingGroups = utils.groupBy(testingSamples, "student_id");
-    for (let stuid in testingGroups) {
-      const sample = testingGroups[stuid];
-      const name = sample[0].student_name;
-      createRow(container, name, sample);
+    for (let student_id in testingGroups) {
+      const samples = testingGroups[student_id];
+      const studentName = samples[0].student_name;
+      createRow(container, studentName, samples);
     }
 
+    // Initializing the Chart
     const options = {
       size: 500,
       axesLabels: featureNames,
       styles: utils.styles,
-      transparency: 0.7,
+      transparency: 0.9,
       icon: "image",
       bg: new Image(),
-      // icon: "text"
+      //hideSamples: true
     };
-
     options.bg.src = constants.DECISION_BOUNDARY;
-
     graphics.generateImages(utils.styles);
+
     const chart = new Chart(
       chartContainer,
-      testingSamples.filter((s) => s.truth == "pencil" && s.label == "clock"),
+      testingSamples.filter((s) => s.truth == "pencil" && s.label != "pencil"),
       options,
       handleClick
     );
+
     const confusion = new Confusion(
       confusionContainer,
       testingSamples,
@@ -123,17 +125,17 @@
       options
     );
 
+    // Initializing the Sketch Pad
     const sketchPad = new SketchPad(inputContainer, onDrawingUpdate);
+    sketchPad.canvas.style.cssText +=
+      "outline:10000px solid rgba(255,255,255,0.7);";
     toggleInput();
 
-    sketchPad.canvas.style.cssText +=
-      "outline:10000000px solid rgba(0,0,0,0.7);";
-
     function onDrawingUpdate(paths) {
-      const fns = featureFns.inUse.map((fn) => fn.function);
-      const point = fns.map((f) => f(paths));
+      const functions = featureFunctions.inUse.map((f) => f.function);
+      point = functions.map((f) => f(paths));
       utils.normalizePoints([point], minMax);
-      const { label, nearestSamples } = knn.predict(point);
+      const { label, nearestSamples } = kNN.predict(point);
       predictedLabelContainer.innerHTML = `Is it a ${label} ?`;
       chart.showDynamicPoint(point, label, nearestSamples);
     }

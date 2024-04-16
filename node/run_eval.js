@@ -38,17 +38,19 @@ console.log(
 console.log(`GENERATING DECISION BOUNDARY ...`);
 
 const { createCanvas } = require("canvas");
-const canvas = createCanvas(1000, 1000);
+const canvas = createCanvas(100, 100);
 const ctx = canvas.getContext("2d");
 
 for (let x = 0; x < canvas.width; x++) {
   for (let y = 0; y < canvas.height; y++) {
     const point = [x / canvas.width, 1 - y / canvas.height];
+    point.push(0.2);
     const { label } = knn.predict(point);
     const color = utils.styles[label].color;
     ctx.fillStyle = color;
     ctx.fillRect(x, y, 1, 1);
   }
+  utils.printProgess(x + 1, canvas.width);
 }
 
 const buffer = canvas.toBuffer("image/png");

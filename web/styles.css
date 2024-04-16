@@ -93,7 +93,7 @@ button:disabled:hover {
     margin: 10px;
 }
 
-#controlPannel {
+#controlPanel {
     position: fixed;
     right: 0;
     top: 0;
@@ -108,7 +108,7 @@ button:disabled:hover {
     position: relative;
 }
 
-#stats {
+#statistics {
     font-size: 20px;
     padding: 20px;
 }
