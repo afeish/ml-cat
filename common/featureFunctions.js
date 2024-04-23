@@ -1,7 +1,6 @@
 if (typeof geometry === "undefined") {
   geometry = require("./geometry.js");
 }
-
 if (typeof draw === "undefined") {
   draw = require("./draw.js");
 }
@@ -19,6 +18,9 @@ featureFunctions.getPointCount = (paths) => {
 
 featureFunctions.getWidth = (paths) => {
   const points = paths.flat();
+  if (points.length == 0) {
+    return 0;
+  }
   const x = points.map((p) => p[0]);
   const min = Math.min(...x);
   const max = Math.max(...x);
@@ -27,6 +29,9 @@ featureFunctions.getWidth = (paths) => {
 
 featureFunctions.getHeight = (paths) => {
   const points = paths.flat();
+  if (points.length == 0) {
+    return 0;
+  }
   const y = points.map((p) => p[1]);
   const min = Math.min(...y);
   const max = Math.max(...y);
@@ -60,14 +65,17 @@ featureFunctions.getPixels = (paths, size = 400, expand = true) => {
   }
 
   const ctx = canvas.getContext("2d");
+
   if (expand) {
     const points = paths.flat();
+
     const bounds = {
       left: Math.min(...points.map((p) => p[0])),
       right: Math.max(...points.map((p) => p[0])),
       top: Math.min(...points.map((p) => p[1])),
       bottom: Math.max(...points.map((p) => p[1])),
     };
+
     const newPaths = [];
     for (const path of paths) {
       const newPoints = path.map((p) => [
