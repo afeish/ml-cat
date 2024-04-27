@@ -3,3 +3,4 @@ node_modules
 common/js_objects
 .venv
 data/models
+__pycache__

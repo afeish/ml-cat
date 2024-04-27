@@ -20,11 +20,12 @@ draw.paths = (ctx, paths, color = "black") => {
 };
 
 draw.text = (ctx, text, color = "black", loc = [0, 0], size = 100) => {
-  ctx.font = "blod" + size + "px Courier";
+  ctx.font = "bold " + size + "px Courier";
   ctx.textBaseline = "top";
   ctx.fillStyle = color;
   ctx.fillText(text, ...loc);
 };
+
 if (typeof module !== "undefined") {
   module.exports = draw;
 }
